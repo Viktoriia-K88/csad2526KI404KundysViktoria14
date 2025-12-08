@@ -1,0 +1,58 @@
+# Назва робочого процесу, що відображатиметься на GitHub
+name: Cross-Platform CMake CI
+
+# Trigger: Запускати акцію при push або pull request у гілки develop чи master
+on:
+  push:
+    branches:
+      - "**develop**" # Включає develop та feature/develop/*
+      - "**master**"
+  pull_request:
+    branches:
+      - "**develop**"
+      - "**master**"
+
+jobs:
+  cross_build:
+    # 4. Strategy: Використати матрицю для запуску білду на трьох ОС
+    runs-on: ${{ matrix.os }}
+
+    strategy:
+      matrix:
+        os: [ubuntu-latest, windows-latest, macos-latest]
+
+    steps:
+      - name: Checkout Code
+        # Checkout коду
+        uses: actions/checkout@v4
+
+      # Установки для Windows (додавання компілятора MSVC)
+      - name: Setup MSBuild (Windows Only)
+        if: runner.os == 'Windows'
+        uses: microsoft/setup-msbuild@v1
+
+      - name: Set up CMake
+        # Встановлення CMake (обов'язково для всіх ОС)
+        uses: jwlawson/setup-cmake@v2
+        with:
+          cmake-version: "3.18"
+
+      - name: Configure, Build, and Test
+        # Запуск команд конфігурації, збірки та тестів
+        run: |
+          # Створення каталогу та перехід
+          mkdir build
+          cd build
+
+          # Конфігурування проекту
+          cmake ..
+
+          # Білдування проєкту
+          cmake --build . --config Release
+
+          # Запуск тестів CTest
+          ctest --output-on-failure
+
+      - name: Deploy Placeholder
+        # Deploy (вимога методології)
+        run: echo "Deployment step (Placeholder for Stage 5)"
