@@ -1,0 +1,62 @@
+# Назва робочого процесу, що відображатиметься на GitHub
+name: Cross-Platform CMake CI
+
+# Trigger: Запускати акцію при push або pull request у гілки develop чи master
+on:
+  push:
+    branches:
+      - "**develop**"
+      - "**master**"
+  pull_request:
+    branches:
+      - "**develop**"
+      - "**master**"
+
+jobs:
+  cross_build:
+    runs-on: ${{ matrix.os }}
+
+    strategy:
+      matrix:
+        os: [ubuntu-latest, windows-latest, macos-latest]
+
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v4
+
+      # 1. НАЛАШТУВАННЯ СЕРЕДОВИЩА ТА ВСТАНОВЛЕННЯ DEPENDENCIES
+
+      # Windows: Встановлення MSBuild (автоматично додає CMake до PATH)
+      - name: Setup MSBuild and CMake (Windows Only)
+        if: runner.os == 'Windows'
+        uses: microsoft/setup-msbuild@v1
+
+      # Linux: Встановлення CMake через apt (якщо ще не встановлено)
+      - name: Install CMake on Ubuntu
+        if: runner.os == 'Linux'
+        run: sudo apt-get install -y cmake
+
+      # macOS: Встановлення CMake через brew (якщо ще не встановлено)
+      - name: Install CMake on macOS
+        if: runner.os == 'macOS'
+        run: brew install cmake
+
+      # 2. КОНФІГУРАЦІЯ, ЗБІРКА ТА ТЕСТУВАННЯ
+
+      - name: Configure, Build, and Test
+        # Команди CMake, що працюють на всіх ОС
+        run: |
+          mkdir build
+          cd build
+
+          # Конфігурування проекту
+          cmake ..
+
+          # Білдування проєкту
+          cmake --build . --config Release
+
+          # Запуск тестів CTest
+          ctest --output-on-failure
+
+      - name: Deploy Placeholder
+        run: echo "Deployment step (Placeholder for Stage 5)"
