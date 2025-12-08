@@ -39,3 +39,6 @@ target_link_libraries(unit_tests PRIVATE math_operations GTest::gtest_main)
 include(GoogleTest)
 gtest_discover_tests(unit_tests)
 
+# Включаємо спеціальний модуль для GTest для автоматичного пошуку тестів
+include(GoogleTest)
+gtest_discover_tests(unit_tests)
