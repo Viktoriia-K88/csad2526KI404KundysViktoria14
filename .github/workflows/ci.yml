@@ -5,7 +5,7 @@ name: Cross-Platform CMake CI
 on:
   push:
     branches:
-      - "**develop**" # Включає develop та feature/develop/*
+      - "**develop**"
       - "**master**"
   pull_request:
     branches:
@@ -31,11 +31,12 @@ jobs:
         if: runner.os == 'Windows'
         uses: microsoft/setup-msbuild@v1
 
+      # ВИПРАВЛЕНО: Використовуємо cmake-actions/setup-cmake@v1
       - name: Set up CMake
         # Встановлення CMake (обов'язково для всіх ОС)
-        uses: jwlawson/setup-cmake@v2
+        uses: cmake-actions/setup-cmake@v1
         with:
-          cmake-version: "3.18"
+          cmake-version: "3.23.1" # Стабільна версія
 
       - name: Configure, Build, and Test
         # Запуск команд конфігурації, збірки та тестів
