@@ -1,3 +1,4 @@
+# CMake configuration for a C++ project that compiles main.cpp into an executable named "hello"
 cmake_minimum_required(VERSION 3.10)
 
 project(HelloWorld LANGUAGES CXX)
@@ -33,6 +34,10 @@ add_executable(unit_tests tests/unit_tests.cpp)
 
 # Лінкуємо тести з GTest (gtest_main) та з бібліотекою, яку ми тестуємо (math_operations)
 target_link_libraries(unit_tests PRIVATE math_operations GTest::gtest_main)
+
+# Включаємо спеціальний модуль для GTest для автоматичного пошуку тестів
+include(GoogleTest)
+gtest_discover_tests(unit_tests)
 
 # Включаємо спеціальний модуль для GTest для автоматичного пошуку тестів
 include(GoogleTest)
